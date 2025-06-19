@@ -25,7 +25,7 @@ public class MessageService {
 
     public Message findMessage(int id) {
         List<Message> messages = getMessageList();
-        for(Message m: messages) {
+        for(Message m : messages) {
             if(m.getMessageId() == id) {
                 return m;
             }
@@ -35,5 +35,15 @@ public class MessageService {
 
     public Message addNewMessage(Message message) {
         return messageRepository.save(message);
+    }
+
+    public Integer deleteMessage(int messageId) {
+        if(findMessage(messageId) != null) {
+            messageRepository.deleteById(messageId);
+            return 1;
+        }
+        else {
+            return null;
+        }
     }
 }
