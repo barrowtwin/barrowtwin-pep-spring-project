@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.hibernate.event.spi.ResolveNaturalIdEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,22 @@ public class SocialMediaController {
         // Else, create the account
         else {
             return new ResponseEntity<>(accountService.addNewAccount(newAccount), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Account> login(@RequestBody Account account) {
+        String username = account.getUsername();
+        String password = account.getPassword();
+
+        Account loggedInAccount = accountService.login(username,password);
+        // if login was successful, repsond ok
+        if(loggedInAccount != null) {
+            return new ResponseEntity<>(loggedInAccount, HttpStatus.OK);
+        }
+        // else, username/password was incorrect and respond with unauthorized
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 

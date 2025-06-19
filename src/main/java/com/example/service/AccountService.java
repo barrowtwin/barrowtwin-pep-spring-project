@@ -39,6 +39,21 @@ public class AccountService {
         return result;
     }
 
+    public Account login(String username, String password) {
+        Account account = null;
+        List<Account> accounts = getAccountList();
+        for(Account acc: accounts) {
+            if(acc.getUsername().equals(username)) {
+                if(acc.getPassword().equals(password)) {
+                    account = acc;
+                    break;
+                }
+                break;
+            }
+        }
+        return account;
+    }
+
     public Account addNewAccount(Account account) {
         return accountRepository.save(account);
     }
