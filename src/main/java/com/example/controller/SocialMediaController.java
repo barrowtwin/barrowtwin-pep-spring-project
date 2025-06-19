@@ -1,13 +1,22 @@
 package com.example.controller;
 
+import java.util.List;
+
+import javax.websocket.server.PathParam;
+
 import org.hibernate.event.spi.ResolveNaturalIdEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
+import com.example.exception.ResourceNotFoundException;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
 
@@ -64,4 +73,30 @@ public class SocialMediaController {
         }
     }
 
+    @PostMapping("/messages")
+    public ResponseEntity<Message> createMessage(@RequestBody Message message) throws ResourceNotFoundException {
+        String messageText = message.getMessageText();
+        int postedBy = message.getPostedBy();
+
+        // Check the messageText and postedBy requirements
+        // If requirements not met, repsond with client error
+        if(messageText.isBlank() || messageText.length() > 255 || !accountService.checkId(postedBy)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // Else, create the message
+        else {
+            return new ResponseEntity<>(messageService.addNewMessage(message), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/messages")
+    public ResponseEntity<List<Message>> getMessages() {
+         return new ResponseEntity<>(messageService.getMessageList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<Message> getMessage(@PathVariable int id) {
+        Message message = messageService.findMessage(id);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
 }

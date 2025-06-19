@@ -23,8 +23,19 @@ public class AccountService {
         return (List<Account>) accountRepository.findAll();
     }
 
+    // Couldn't use this method due to it creating a 404 status code instead of 400 status code
     public Account findAccount(int id) throws ResourceNotFoundException {
         return accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Account with ID=" + id + " not found."));
+    }
+
+    public boolean checkId(int id) {
+        List<Account> accounts = getAccountList();
+        for(Account acc: accounts) {
+            if(acc.getAccountId() == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean checkUsername(String username) {

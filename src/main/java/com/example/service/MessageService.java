@@ -23,7 +23,17 @@ public class MessageService {
         return (List<Message>) messageRepository.findAll();
     }
 
-    public Message findMessage(int id) throws ResourceNotFoundException {
-        return messageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Message with ID=" + id + " not found."));
+    public Message findMessage(int id) {
+        List<Message> messages = getMessageList();
+        for(Message m: messages) {
+            if(m.getMessageId() == id) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public Message addNewMessage(Message message) {
+        return messageRepository.save(message);
     }
 }
