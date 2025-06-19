@@ -46,4 +46,11 @@ public class MessageService {
             return null;
         }
     }
+
+    public Integer updateMessage(String messageText, Message message) {
+        messageRepository.deleteById(message.getMessageId());
+        message.setMessageText(messageText);
+        messageRepository.save(message);
+        return 1;
+    }
 }

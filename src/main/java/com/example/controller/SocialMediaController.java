@@ -1,13 +1,13 @@
 package com.example.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.hibernate.event.spi.ResolveNaturalIdEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -95,5 +95,16 @@ public class SocialMediaController {
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessage(@PathVariable int messageId) {
         return ResponseEntity.status(200).body(messageService.deleteMessage(messageId));
+    }
+
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<Integer> updateMessage(@PathVariable int messageId, @RequestBody String messageText) {
+        Message message = messageService.findMessage(messageId);
+        if(messageText.isBlank() || messageText.length() > 255 || message == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        else {
+            return ResponseEntity.status(200).body(messageService.updateMessage(messageText, message));
+        }
     }
 }
