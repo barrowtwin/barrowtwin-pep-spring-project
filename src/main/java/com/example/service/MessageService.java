@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.repository.MessageRepository;
 import com.example.entity.Message;
-import com.example.exception.ResourceNotFoundException;
 
 @Service
 public class MessageService {
@@ -49,7 +48,6 @@ public class MessageService {
     }
 
     public void updateMessage(String messageText, Message message) {
-        messageRepository.deleteById(message.getMessageId());
         message.setMessageText(messageText);
         messageRepository.save(message);
     }

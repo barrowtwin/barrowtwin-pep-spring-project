@@ -100,10 +100,12 @@ public class SocialMediaController {
     }
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessage(@RequestParam int messageId, @RequestBody String messageText) {
-        Message message = messageService.findMessage(messageId);
+    public ResponseEntity<Integer> updateMessage(@PathVariable int messageId, @RequestBody Message message) {
+        String messageText = message.getMessageText();
+        Message m = messageService.findMessage(messageId);
+        
         // if message text does not meet requirements or id doesn't exist, then return bad request
-        if(messageText.isBlank() || messageText.length() > 255 || message == null) {
+        if(messageText.isBlank() || messageText.length() > 255 || m == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // else, update the message
