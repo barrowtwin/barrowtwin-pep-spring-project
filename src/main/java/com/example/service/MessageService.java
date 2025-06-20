@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +48,20 @@ public class MessageService {
         }
     }
 
-    public Integer updateMessage(String messageText, Message message) {
+    public void updateMessage(String messageText, Message message) {
         messageRepository.deleteById(message.getMessageId());
         message.setMessageText(messageText);
         messageRepository.save(message);
-        return 1;
+    }
+
+    public List<Message> getMessagesByUser(int id) {
+        List<Message> userMessages = new ArrayList<>();
+        List<Message> allMessages = getMessageList();
+        for(Message m : allMessages) {
+            if(m.getPostedBy() == id) {
+                userMessages.add(m);
+            }
+        }
+        return userMessages;
     }
 }

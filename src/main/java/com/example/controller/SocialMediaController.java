@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.event.spi.ResolveNaturalIdEvent;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
@@ -98,13 +100,21 @@ public class SocialMediaController {
     }
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessage(@PathVariable int messageId, @RequestBody String messageText) {
+    public ResponseEntity<Integer> updateMessage(@RequestParam int messageId, @RequestBody String messageText) {
         Message message = messageService.findMessage(messageId);
+        // if message text does not meet requirements or id doesn't exist, then return bad request
         if(messageText.isBlank() || messageText.length() > 255 || message == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        // else, update the message
         else {
-            return ResponseEntity.status(200).body(messageService.updateMessage(messageText, message));
+            messageService.updateMessage(messageText, message);
+            return ResponseEntity.status(200).body(1);
         }
+    }
+
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getMessagesFromUser(@PathVariable int accountId) {
+        return ResponseEntity.status(200).body(messageService.getMessagesByUser(accountId));
     }
 }
